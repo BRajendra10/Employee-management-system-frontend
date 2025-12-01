@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { LayoutList, Grid3X3, Search, MoreVertical } from "lucide-react";
 import { deleteEmployee, filterEmployees, getAllEmployees } from "../api/employee.api";
 import ViewEmployeeModal from "./ViewEmployeeModal";
+import { useNavigate } from 'react-router-dom';
 
 function EmployeeList() {
   const [view, setView] = useState("list"); // list | board
@@ -11,6 +12,7 @@ function EmployeeList() {
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   function handleView(emp) {
     setSelectedEmployee(emp);
@@ -21,40 +23,11 @@ function EmployeeList() {
     deleteEmployee(employeeId);
   }
 
-  // const handleFilter = async () => {
-  //   try {
-  //     let data = [];
-
-  //     // If both are "all" → fetch all
-  //     if (departmentFilter === "all" && positionFilter === "all") {
-  //       const res = await getAllEmployees();
-  //       return setEmployees(res.employees);
-  //     }
-
-  //     // If only department selected
-  //     if (departmentFilter !== "all" && positionFilter === "all") {
-  //       const res = await filterEmployeeWithDepartment(departmentFilter);
-  //       return setEmployees(res.employees);
-  //     }
-
-  //     // If only position selected
-  //     if (positionFilter !== "all" && departmentFilter === "all") {
-  //       const res = await filterEmployeeWithPosition(positionFilter);
-  //       return setEmployees(res.employees);
-  //     }
-
-  //     // If both filters selected → chain them
-  //     const depRes = await filterEmployeeWithDepartment(departmentFilter);
-  //     const combined = depRes.employees.filter(
-  //       (emp) => emp.position === positionFilter
-  //     );
-
-  //     setEmployees(combined);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
+  function handleEdit(employee) {
+    navigate("/add-employee", {
+      state: employee
+    })
+  }
 
   useEffect(() => {
     ; (async () => {
@@ -65,9 +38,8 @@ function EmployeeList() {
         setEmployees(data.employees);
         setLoading(false);
       } else {
-        console.log("else block...")
         const data = await filterEmployees({ departmentFilter, positionFilter });
-        console.log(data);
+
         setEmployees(data);
         setLoading(false);
       }
@@ -75,7 +47,7 @@ function EmployeeList() {
 
   }, [departmentFilter, positionFilter, setEmployees]);
 
-  if(loading) {
+  if (loading) {
     return <div>Loading...</div>
   }
 
@@ -136,7 +108,7 @@ function EmployeeList() {
               <option value="Marketing consultant">Marketing consultant</option>
               <option value="Marketing coordinator">Marketing coordinator</option>
               <option value="Director of marketing">Director of marketing</option>
-              <option value="Full stack web developer">Full stack web developer</option> 
+              <option value="Full stack web developer">Full stack web developer</option>
             </select>
           </div>
 
@@ -203,7 +175,12 @@ function EmployeeList() {
                     >
                       View
                     </button>
-                    <button className="px-3 py-1 text-green-600 text-sm">Edit</button>
+                    <button
+                      className="px-3 py-1 text-green-600 text-sm"
+                      onClick={() => handleEdit(emp)}
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleDelete(emp._id)}
                       className="px-3 py-1 text-red-600 text-sm"

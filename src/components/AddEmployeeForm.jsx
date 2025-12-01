@@ -1,8 +1,8 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { addEmployee } from "../api/employee.api";
-import { useNavigate } from 'react-router-dom';
+import { addEmployee, updateEmployee } from "../api/employee.api";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // ⭐ Yup Validation Schema
 const employeeSchema = Yup.object({
@@ -23,6 +23,11 @@ const employeeSchema = Yup.object({
 
 function AddEmployeeForm() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const data = location.state;
+
+    console.log(data);
+
     return (
         <div className="w-full h-screen flex justify-center items-center">
             <div className="w-120 mx-auto bg-white p-6 rounded-2xl shadow-sm border">
@@ -30,17 +35,22 @@ function AddEmployeeForm() {
 
                 <Formik
                     initialValues={{
-                        name: "",
-                        email: "",
-                        phone: "",
-                        department: "",
-                        position: "",
-                        salary: "",
+                        name: data?.name || "",
+                        email: data?.email || "",
+                        phone: data?.phone || "",
+                        department: data?.department || "",
+                        position: data?.position || "",
+                        salary: data?.salary || "",
                     }}
                     validationSchema={employeeSchema}
                     onSubmit={async (values, { resetForm }) => {
-                        await addEmployee(values);
-                        resetForm();
+                        if (!data) {
+                            await updateEmployee({ employeeId: data._id, employeeData: values })
+                            resetForm();
+                        } else {
+                            await addEmployee(values);
+                            resetForm();
+                        }
                         navigate("/");
                     }}
                 >
@@ -145,7 +155,7 @@ function AddEmployeeForm() {
                                 disabled={isSubmitting}
                                 className="w-full bg-gray-900 text-white py-2.5 rounded-xl hover:bg-gray-800 transition"
                             >
-                                Add Employee
+                                {data ? "Edit" : "Add"} Employee
                             </button>
 
                         </Form>

@@ -10,22 +10,17 @@ export const addEmployee = async (employeeData) => {
     return responce.data;
 }
 
-// export const filterEmployeeWithDepartment = async (department) => {
-//     const responce = await api.get("/filter-department", {
-//         params: { department }
-//     });
-//     return responce.data;
-// }
+export const updateEmployee = async ({ employeeId, employeeData }) => {
+    const responce = await api.put(`/update/:${employeeId}`, employeeData);
+    return responce.data;
+}
 
-// export const filterEmployeeWithPosition = async (position) => {
-//     const responce = await api.get("/filter-position", {
-//         params: { position }
-//     });
-//     return responce.data;
-// }
+export const deleteEmployee = async (employeeId) => {
+    const responce = await api.delete(`/delete/${employeeId}`);
+    return responce.data;
+}
 
 export const filterEmployees = async ({ departmentFilter, positionFilter }) => {
-    console.log({ departmentFilter, positionFilter });
     const responce = await api.get("/filter", {
         params: {
             department: departmentFilter,
@@ -35,9 +30,4 @@ export const filterEmployees = async ({ departmentFilter, positionFilter }) => {
     console.log(responce.data);
 
     return responce.data.data;
-}
-
-export const deleteEmployee = async (employeeId) => {
-    const responce = await api.delete(`/delete/${employeeId}`);
-    return responce.data;
 }
