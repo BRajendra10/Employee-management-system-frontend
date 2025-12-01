@@ -26,12 +26,10 @@ function AddEmployeeForm() {
     const location = useLocation();
     const data = location.state;
 
-    console.log(data);
-
     return (
         <div className="w-full h-screen flex justify-center items-center">
             <div className="w-120 mx-auto bg-white p-6 rounded-2xl shadow-sm border">
-                <h2 className="text-lg font-semibold mb-4">Add New Employee</h2>
+                <h2 className="text-lg font-semibold mb-4">{data ? "Edit" : "Add New"} Employee</h2>
 
                 <Formik
                     initialValues={{
@@ -44,13 +42,13 @@ function AddEmployeeForm() {
                     }}
                     validationSchema={employeeSchema}
                     onSubmit={async (values, { resetForm }) => {
-                        if (!data) {
+                        if (data) {
                             await updateEmployee({ employeeId: data._id, employeeData: values })
-                            resetForm();
                         } else {
                             await addEmployee(values);
-                            resetForm();
                         }
+
+                        resetForm();
                         navigate("/");
                     }}
                 >
