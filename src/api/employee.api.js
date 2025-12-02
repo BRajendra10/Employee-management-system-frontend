@@ -11,7 +11,7 @@ export const addEmployee = async (employeeData) => {
 }
 
 export const updateEmployee = async ({ employeeId, employeeData }) => {
-    const responce = await api.put(`/update/:${employeeId}`, employeeData);
+    const responce = await api.put(`/update/${employeeId}`, employeeData);
     return responce.data;
 }
 
